@@ -169,6 +169,14 @@ RCT_EXPORT_METHOD(start:(NSString *)mediaType
     }
     [self setKeepScreenOn:YES];
     _audioSessionInitialized = YES;
+  
+    // route to speaker if no bluetooth devices
+    BOOL isBluetoothConnected = [self checkAudioRoute:@[AVAudioSessionPortBluetoothA2DP]
+                                            routeType:@"output"] || [self checkAudioRoute:@[AVAudioSessionPortBluetoothHFP]
+                                                                                routeType:@"output"];
+    if (!isBluetoothConnected) {
+      [self setSpeakerphoneOn:YES];
+    }
     //self.debugAudioSession()
 }
 
@@ -919,6 +927,8 @@ RCT_EXPORT_METHOD(getIsWiredHeadsetPluggedIn:(RCTPromiseResolveBlock)resolve
                     break;
                 case AVAudioSessionRouteChangeReasonOldDeviceUnavailable:
                     NSLog(@"RNInCallManager.AudioRouteChange.Reason: OldDeviceUnavailable");
+                    // Route to speaker
+                    [self setSpeakerphoneOn:YES];
                     if (![self isWiredHeadsetPluggedIn]) {
                         [self sendEventWithName:@"WiredHeadset"
                                            body:@{

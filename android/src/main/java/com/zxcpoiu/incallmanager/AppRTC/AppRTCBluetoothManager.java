@@ -182,6 +182,9 @@ public class AppRTCBluetoothManager {
             Log.d(TAG, "Ignore STATE_AUDIO_DISCONNECTED initial sticky broadcast.");
             return;
           }
+          bluetoothState = State.HEADSET_AVAILABLE;
+          scoConnectionAttempts = 0;
+          startScoAudio();
           updateAudioDeviceState();
         }
       }
